@@ -10,11 +10,6 @@ node_modules
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-files_tara_terminal.json
-filter_sizes.json
-marine_layers.json
-meta_tags.json
-tara_full.json
 # Editor directories and files
 .idea
 .vscode
@@ -25,3 +20,8 @@ tara_full.json
 *.sw?
 *.zip
 src/asssets/*.json
+/*.json
+/*.tar.xz
+/*.tab
+!package-lock.json
+!package.json

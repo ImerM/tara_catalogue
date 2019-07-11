@@ -9,7 +9,10 @@
   },
   "dependencies": {
     "core-js": "^2.6.5",
+    "datamaps": "^0.5.9",
     "vue": "^2.6.10",
+    "vue-loader": "^15.7.0",
+    "vue-markdown-loader": "^2.4.1",
     "vuetify": "^1.5.5"
   },
   "devDependencies": {

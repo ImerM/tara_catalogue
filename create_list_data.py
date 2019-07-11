@@ -21,7 +21,9 @@ if empty add a value to the node 'is_empty':true
 
 """
 filter_sizes = []
-meta_tags = []
+meta_tags_first = []
+meta_tags_second = []
+
 marine_layers = []
 
 def split_into_lists(dir_meta):
@@ -31,9 +33,12 @@ def split_into_lists(dir_meta):
             filter_sizes.append(entry["filter_size"])
         if entry["layer"] not in marine_layers:
             marine_layers.append(entry["layer"])
-        for tag in entry["tags"]:
-            if tag not in meta_tags:
-                meta_tags.append(tag)
+        if len(entry["tags"]) == 2:
+            if entry["tags"][0] not in meta_tags_first:
+                meta_tags_first.append(entry["tags"][0])
+            if entry["tags"][1] not in meta_tags_second:
+                meta_tags_second.append(entry["tags"][1])
+        
    
 
 def main():
@@ -43,8 +48,10 @@ def main():
     
     with open('filter_sizes.json', 'w') as json_file:  
         json.dump(filter_sizes, json_file)
-    with open('meta_tags.json', 'w') as json_file:  
-        json.dump(meta_tags, json_file)
+    with open('meta_tags_first.json', 'w') as json_file:  
+        json.dump(meta_tags_first, json_file)
+    with open('meta_tags_second.json', 'w') as json_file:  
+        json.dump(meta_tags_second, json_file)
     with open('marine_layers.json', 'w') as json_file:  
         json.dump(marine_layers, json_file)
 

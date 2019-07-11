@@ -8,30 +8,62 @@
       v-model="selected_filter_size"
     >
       <v-list-tile slot="prepend-item" ripple @click="toggle_all_filter">
-        <v-list-tile-title><div v-if="this.selected_filter_size.length == 0">Select All</div><div v-if="this.selected_filter_size.length > 0">Deselect All</div></v-list-tile-title>
+        <v-list-tile-title>
+          <div v-if="this.selected_filter_size.length == 0">Select All</div>
+          <div v-if="this.selected_filter_size.length > 0">Deselect All</div>
+        </v-list-tile-title>
       </v-list-tile>
-      <v-divider slot="prepend-item" class="mt-2"/>
+      <v-divider slot="prepend-item" class="mt-2" />
     </v-select>
+
+    <v-select
+      :items="localities"
+      item-text="name"
+      item-value="key"
+      label="Locality type"
+      v-model="selected_locality_type"
+    ></v-select>
+
+    <v-select :items="locality_array" label="Locality" v-model="selected_locality"></v-select>
+
     <v-select :items="layers" multiple chips label="Layer" v-model="selected_layer">
       <v-list-tile slot="prepend-item" ripple @click="toggle_all_layers">
-        <v-list-tile-title><div v-if="this.selected_layer.length == 0">Select All</div><div v-if="this.selected_layer.length > 0">Deselect All</div></v-list-tile-title>
+        <v-list-tile-title>
+          <div v-if="this.selected_layer.length == 0">Select All</div>
+          <div v-if="this.selected_layer.length > 0">Deselect All</div>
+        </v-list-tile-title>
       </v-list-tile>
-      <v-divider slot="prepend-item" class="mt-2"/>
+      <v-divider slot="prepend-item" class="mt-2" />
     </v-select>
-    <v-select :items="tags" multiple chips label="Tag" v-model="selected_tags">
-      <v-list-tile slot="prepend-item" ripple @click="toggle_all_tags">
-        <v-list-tile-title><div v-if="this.selected_tags.length == 0">Select All</div><div v-if="this.selected_tags.length > 0">Deselect All</div></v-list-tile-title>
+
+    <v-select :items="tags_first" multiple chips label="Tag" v-model="selected_tags_first">
+      <v-list-tile slot="prepend-item" ripple @click="toggle_all_tags_first">
+        <v-list-tile-title>
+          <div v-if="this.selected_tags_first.length == 0">Select All</div>
+          <div v-if="this.selected_tags_first.length > 0">Deselect All</div>
+        </v-list-tile-title>
       </v-list-tile>
-      <v-divider slot="prepend-item" class="mt-2"/>
+      <v-divider slot="prepend-item" class="mt-2" />
+    </v-select>
+
+    <v-select :items="tags_second" multiple chips label="Tag" v-model="selected_tags_second">
+      <v-list-tile slot="prepend-item" ripple @click="toggle_all_tags_second">
+        <v-list-tile-title>
+          <div v-if="this.selected_tags_second.length == 0">Select All</div>
+          <div v-if="this.selected_tags_second.length > 0">Deselect All</div>
+        </v-list-tile-title>
+      </v-list-tile>
+      <v-divider slot="prepend-item" class="mt-2" />
     </v-select>
     <v-btn depressed v-on:click="send_filter_parameters()">Filter</v-btn>
+    <v-btn depressed v-on:click="clear()">Clear</v-btn>
   </div>
 </template>
 
 <script>
 export default {
   name: "FilterForm",
-  props: ["filter_size", "layers", "tags"],
+  props: ["filter_size", "layers", "tags_first", "tags_second", "localities"],
   mounted() {
     console.log("filtered mouted");
   },
@@ -39,42 +71,70 @@ export default {
     return {
       selected_filter_size: [],
       selected_layer: [],
-      selected_tags: []
+      selected_tags_first: [],
+      selected_tags_second: [],
+      selected_locality_type: null,
+      selected_locality: []
     };
   },
   methods: {
-    toggle_all_filter: function(){
+    toggle_all_filter: function() {
       if (this.selected_filter_size.length > 0) {
-        this.selected_filter_size = []
-      }
-      else{
-        this.selected_filter_size = this.filter_size
+        this.selected_filter_size = [];
+      } else {
+        this.selected_filter_size = this.filter_size;
       }
     },
-    toggle_all_layers: function()
-    {
+    toggle_all_layers: function() {
       if (this.selected_layer.length > 0) {
-        this.selected_layer = []
-      }
-      else{
-        this.selected_layer = this.layers
+        this.selected_layer = [];
+      } else {
+        this.selected_layer = this.layers;
       }
     },
-    toggle_all_tags: function(){
-      if (this.selected_tags.length > 0) {
-        this.selected_tags = []
+    toggle_all_tags_first: function() {
+      if (this.selected_tags_first.length > 0) {
+        this.selected_tags_first = [];
+      } else {
+        this.selected_tags_first = this.tags_first;
       }
-      else{
-        this.selected_tags = this.tags
+    },
+    toggle_all_tags_second: function() {
+      if (this.selected_tags_second.length > 0) {
+        this.selected_tags_second = [];
+      } else {
+        this.selected_tags_second = this.tags_second;
       }
     },
     send_filter_parameters: function() {
       let send_filter_parameters = {
         filter_size: this.selected_filter_size,
         layer: this.selected_layer,
-        tags: this.selected_tags
+        tags_first: this.selected_tags_first,
+        tags_second: this.selected_tags_second,
+        locality_type_selected: this.selected_locality_type,
+        locality: this.selected_locality
       };
       this.$emit("filter_sent", send_filter_parameters);
+    },
+    clear: function() {
+      this.selected_filter_size = [];
+      this.selected_layer = [];
+      this.selected_tags_first = [];
+      this.selected_tags_second = [];
+      this.selected_locality_type = null;
+      this.selected_locality = [];
+    }
+  },
+  computed: {
+    locality_array: function() {
+      if (this.selected_locality_type) {
+        var filtered = this.localities.filter(
+          locale => locale.key == this.selected_locality_type
+        );
+        return filtered[0].content;
+      }
+      return null;
     }
   }
 };
